@@ -6,10 +6,10 @@ import {
   Database, 
   Terminal,
   Code2,
-  Globe,
   ArrowRight,
-  MonitorPlay
+  Users
 } from 'lucide-react';
+import { SiSupabase, SiFirebase, SiVercel } from 'react-icons/si';
 
 // --- Custom Hooks ---
 const useIntersectionObserver = (options = {}) => {
@@ -172,6 +172,27 @@ const Reveal = ({ children, direction = 'up', delay = 0 }) => {
   );
 };
 
+// --- Hero Background Video ---
+const HeroBackgroundVideo = () => {
+  const videoRef = useRef(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) video.playbackRate = 0.7;
+  }, []);
+  return (
+    <video
+      ref={videoRef}
+      autoPlay
+      loop
+      muted
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover opacity-40"
+    >
+      <source src="/mixkit-world-map-in-a-digital-world-12748-hd-ready.mp4" type="video/mp4" />
+    </video>
+  );
+};
+
 // --- Hero Terminal ---
 const TERMINAL_MESSAGES = [
   'Willkommen! Hier entsteht Software, die zu dir passt.',
@@ -228,7 +249,7 @@ const HeroTerminal = () => {
         <span className="terminal-dot terminal-dot--red"></span>
         <span className="terminal-dot terminal-dot--yellow"></span>
         <span className="terminal-dot terminal-dot--green"></span>
-        <span className="terminal-title">laas@studio:~</span>
+        <span className="terminal-title">LAAS_app_studio: ~</span>
       </div>
       <div className="terminal-body">
         <p className="terminal-line">
@@ -246,9 +267,9 @@ const NavBar = ({ scrolled }) => (
     <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
       <a href="#" className="flex items-center group cursor-pointer">
         <img
-          src="/LAAS_schriftzug.png"
+          src="/liftapp-2.png"
           alt="LAAS – Luca Arnoldi App Studio"
-          className="h-8 md:h-10 w-auto object-contain transition-all duration-300 group-hover:opacity-80 invert"
+          className="h-10 md:h-14 w-auto object-contain transition-all duration-300 group-hover:opacity-80 brightness-0 invert"
         />
       </a>
       <div className="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
@@ -263,28 +284,60 @@ const NavBar = ({ scrolled }) => (
   </nav>
 );
 
-const ServiceCard = ({ icon: Icon, title, description, delay, index }) => (
-  <Reveal delay={delay} direction="up">
-    <div className="group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden min-h-[340px] flex flex-col justify-between">
-      <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02]">
-        <div className="flex gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-red-400/80 transition-colors"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-yellow-400/80 transition-colors"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-green-400/80 transition-colors"></div>
-        </div>
-        <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">SRV_0{index}.EXE</span>
+// Einheitliche Kachel-Vorlage (wie Premium Hosting)
+const Card = ({ icon: Icon, title, description, label, children, className = '', hideExecute = false }) => (
+  <div className={`group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden min-h-[340px] flex flex-col justify-between ${className}`}>
+    <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02]">
+      <div className="flex gap-2">
+        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-red-400/80 transition-colors"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-yellow-400/80 transition-colors"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-green-400/80 transition-colors"></div>
       </div>
-      <div className="p-8 flex-grow">
-        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500">
-          <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
-        </div>
-        <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">{title}</h3>
-        <p className="text-gray-400 leading-relaxed text-sm font-light">{description}</p>
+      <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{label}</span>
+    </div>
+    <div className="p-8 flex-grow flex flex-col min-h-0">
+      <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500 shrink-0">
+        <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
       </div>
-      <div className="px-8 pb-8 flex items-center font-mono text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">
+      <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">{title}</h3>
+      {children ? children : <p className="text-gray-400 leading-relaxed text-sm font-light">{description}</p>}
+    </div>
+    {!hideExecute && (
+      <div className="px-8 pb-8 flex items-center font-mono text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors shrink-0">
         <span className="text-green-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">&gt;</span> Execute <ArrowRight className="w-4 h-4 ml-2" />
       </div>
+    )}
+  </div>
+);
+
+// Kachel-Vorlage ohne Execute-Footer (für Tool-Kacheln)
+const ToolCard = ({ icon: Icon, label, title, children, className = '', hideIcon = false }) => (
+  <div className={`group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden flex flex-col ${className}`}>
+    <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02] shrink-0">
+      <div className="flex gap-2">
+        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-red-400/80 transition-colors"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-yellow-400/80 transition-colors"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-green-400/80 transition-colors"></div>
+      </div>
+      <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{label}</span>
     </div>
+    <div className="p-8 flex flex-col justify-between flex-grow min-h-0">
+      <div>
+        {!hideIcon && (
+          <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500">
+            <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
+          </div>
+        )}
+        <h3 className="text-2xl font-semibold text-white mb-4 tracking-tight">{title}</h3>
+      </div>
+      {children}
+    </div>
+  </div>
+);
+
+const ServiceCard = ({ icon, title, description, delay, index }) => (
+  <Reveal delay={delay} direction="up">
+    <Card icon={icon} title={title} description={description} label={`SRV_0${index}.EXE`} className="h-[350px]" />
   </Reveal>
 );
 
@@ -307,9 +360,7 @@ export default function App() {
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-50">
-              <source src="/mixkit-world-map-in-a-digital-world-12748-hd-ready.mp4" type="video/mp4" />
-            </video>
+            <HeroBackgroundVideo />
             <div className="absolute inset-0 bg-[#050505]/60"></div>
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
           </div>
@@ -357,15 +408,15 @@ export default function App() {
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
                 Engineering <span className="text-gray-500 font-mono text-2xl md:text-4xl font-normal ml-2">_Excellence</span>
               </h2>
-              <p className="text-gray-400 text-lg mb-16 max-w-2xl font-light">
-                <span className="font-mono text-xs text-green-400 mr-2">[ Module geladen: 4 ]</span>
-                Was ich anbiete – von KI-Workflows über Apps bis Hosting. Ehrlich und direkt.
-              </p>
+              <div className="text-gray-400 text-lg mb-16 max-w-2xl font-light">
+                <p className="font-mono text-xs text-green-400 mb-2">[ Module geladen: 4 ]</p>
+                <p>Was ich anbiete – von KI-Workflows über Apps bis Hosting. Ehrlich und direkt.</p>
+              </div>
             </Reveal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard index={1} icon={Cpu} title="KI Automatisierung" description="Integriere smarte KI-Modelle. Wir automatisieren kognitive Prozesse und werten Daten in Echtzeit aus." delay={100} />
-              <ServiceCard index={2} icon={Workflow} title="Smart Workflows" description="Kein manuelles Copy-Paste. Wir vernetzen deine Tools und bauen automatische, fehlerfreie Pipelines." delay={200} />
+              <ServiceCard index={1} icon={Cpu} title="KI Automatisierung" description="KI-Modelle einbauen, Prozesse automatisieren, Daten auswerten – ich helfe dir dabei." delay={100} />
+              <ServiceCard index={2} icon={Workflow} title="Smart Workflows" description="Deine Tools vernetzen, Pipelines bauen – kein Copy-Paste mehr nötig." delay={200} />
               <ServiceCard index={3} icon={Smartphone} title="App Entwicklung" description="Maßgeschneiderte Native- und Web-Apps. Perfektes UI/UX-Design nach modernsten Standards." delay={300} />
               <ServiceCard index={4} icon={Database} title="Premium Hosting" description="Blitzschnelles, DSGVO-konformes Hosting. Server, Backups und Skalierung laufen vollautomatisch." delay={400} />
             </div>
@@ -376,36 +427,107 @@ export default function App() {
         <section id="about" className="py-20 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[280px]">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto md:auto-rows-[328px]">
 
-              <div className="md:col-span-2 md:row-span-2 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-10 relative overflow-hidden group hover:border-white/30 transition-all duration-500">
-                <div className="absolute top-8 right-8 text-white/5 group-hover:text-white/10 transition-colors duration-500">
-                  <MonitorPlay className="w-64 h-64" strokeWidth={0.5} />
-                </div>
-                <Reveal>
-                  <div className="h-full flex flex-col justify-end relative z-10">
-                    <div className="w-14 h-14 rounded-xl border border-white/20 bg-white/10 text-white flex items-center justify-center mb-8 backdrop-blur-md">
-                      <Code2 className="w-6 h-6" />
+              {/* Clean Code – links oben, 2 Spalten */}
+              <div className="md:col-span-2 md:col-start-1 md:row-start-1">
+                <Card
+                  icon={Code2}
+                  title="Clean Code. High Performance."
+                  description="Ich schreibe Code, der heute funktioniert und morgen noch mitmacht. Sauber, schnell – ohne Ballast."
+                  label="CODE_01.EXE"
+                  className="h-[328px]"
+                  hideExecute={true}
+                />
+              </div>
+
+              {/* Entwicklungstools – rechts oben */}
+              <ToolCard
+                icon={Workflow}
+                title="Entwicklungstools"
+                label="TOOLS_01.EXE"
+                className="h-[328px] md:col-start-3 md:row-start-1"
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                      <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />
                     </div>
-                    <h3 className="text-3xl font-bold tracking-tight mb-4">Clean Code. High Performance.</h3>
-                    <p className="text-gray-400 max-w-md font-light leading-relaxed">
-                      Bei LAAS schreiben wir Code, der nicht nur heute funktioniert, sondern auch für die Herausforderungen von morgen skaliert. Jede Zeile ist streng optimiert.
-                    </p>
+                    <span className="text-sm text-gray-300 font-medium">Cursor AI</span>
                   </div>
-                </Reveal>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                      <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-sm text-gray-300 font-medium">n8n</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                      <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-sm text-gray-300 font-medium">Anthropic</span>
+                  </div>
+                </div>
+              </ToolCard>
+
+              {/* Meine Referenzen – links unten, 2 Spalten */}
+              <div className="order-last md:order-none md:col-span-2 md:col-start-1 md:row-start-2">
+                <ToolCard
+                  icon={Users}
+                  hideIcon={true}
+                  title="Meine Referenzen"
+                  label="CLIENTS_01.EXE"
+                  className="h-[328px] w-full"
+                >
+                  <div className="overflow-hidden relative flex items-center min-h-[200px]">
+                    <div className="flex gap-3 animate-marquee shrink-0">
+                      {[
+                        { src: '/harley-davidson-logo.png', alt: 'Harley-Davidson Power Shop', bg: 'bg-white' },
+                        { src: '/intersport-gemo-logo.png', alt: 'Intersport GEMO', bg: 'bg-white' },
+                        { src: '/mobileobjects-logo.png', alt: 'mobileObjects', bg: 'bg-black border border-white/10' },
+                        { src: '/harley-davidson-logo.png', alt: 'Harley-Davidson Power Shop', bg: 'bg-white' },
+                        { src: '/intersport-gemo-logo.png', alt: 'Intersport GEMO', bg: 'bg-white' },
+                        { src: '/mobileobjects-logo.png', alt: 'mobileObjects', bg: 'bg-black border border-white/10' },
+                      ].map((client, i) => (
+                        <div key={i} className={`flex-shrink-0 h-20 w-48 rounded-lg ${client.bg} flex items-center justify-center px-4 overflow-hidden`}>
+                          <img src={client.src} alt={client.alt} className="w-full h-full object-contain" />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+                  </div>
+                </ToolCard>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col justify-center relative group hover:bg-white/[0.04] transition-colors duration-500">
-                <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-white/5 blur-3xl rounded-full"></div>
-                <Globe className="w-10 h-10 text-gray-300 mb-6" strokeWidth={1.5} />
-                <h4 className="text-xl font-bold tracking-tight mb-2">Global_Scale</h4>
-                <p className="text-sm text-gray-500 font-light leading-relaxed">Weltweites Edge-CDN für minimale Latenz, unabhängig vom Client-Standort.</p>
-              </div>
-
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col justify-center items-center text-center group hover:bg-white/[0.04] transition-colors duration-500">
-                <h4 className="text-6xl font-bold text-white tracking-tighter mb-4">99.9<span className="text-gray-500">%</span></h4>
-                <p className="text-xs font-mono text-gray-400 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">Uptime Garantie</p>
-              </div>
+              {/* Datenbank & Hosting – rechts unten */}
+              <ToolCard
+                icon={Database}
+                title="Datenbank & Hosting"
+                label="TOOLS_02.EXE"
+                className="h-[328px] md:col-start-3 md:row-start-2"
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                      <SiSupabase className="w-4 h-4" style={{ color: '#3ECF8E' }} />
+                    </div>
+                    <span className="text-sm text-gray-300 font-medium">Supabase</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                      <SiFirebase className="w-4 h-4" style={{ color: '#FFCA28' }} />
+                    </div>
+                    <span className="text-sm text-gray-300 font-medium">Firebase</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                      <SiVercel className="w-4 h-4" style={{ color: '#FFFFFF' }} />
+                    </div>
+                    <span className="text-sm text-gray-300 font-medium">Vercel</span>
+                  </div>
+                </div>
+              </ToolCard>
 
             </div>
           </div>
@@ -423,7 +545,7 @@ export default function App() {
                 Lust auf ein Projekt?
               </h2>
               <p className="text-lg text-gray-400 font-light mb-12 max-w-xl mx-auto leading-relaxed">
-                Schreib mir – dann schauen wir, ob wir zusammenpassen.
+                Schreib mir – dann starten wir.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
                 <div className="relative w-full">
@@ -450,9 +572,9 @@ export default function App() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-16">
             <a href="#" className="flex items-center group cursor-pointer">
               <img
-                src="/LAAS_schriftzug.png"
+                src="/liftapp-2.png"
                 alt="LAAS – Luca Arnoldi App Studio"
-                className="h-8 w-auto object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300 invert"
+                className="h-10 w-auto object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300 brightness-0 invert"
               />
             </a>
             <div className="flex flex-wrap justify-center gap-6 text-xs font-mono text-gray-500 uppercase tracking-widest">

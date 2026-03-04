@@ -35,6 +35,9 @@
   font-family: 'Space Mono', monospace;
   font-size: 0.85rem;
 }
+.terminal-line {
+  min-height: 2.8em;
+}
 .terminal-prompt { color: #39ff14; margin-right: 0.5em; }
 .typing-text { color: #00f0ff; }
 .terminal-cursor {
@@ -104,4 +107,15 @@
   33%  { transform: translate(-70px, 35px); }
   66%  { transform: translate(50px, -25px); }
   100% { transform: translate(-30px, 15px); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 18s linear infinite;
+  display: flex;
+  width: max-content;
 }
