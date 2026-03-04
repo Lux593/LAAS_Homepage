@@ -11,10 +11,11 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background: #12121a;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px 8px 0 0;
-  border: 1px solid #2a2a3a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: none;
+  backdrop-filter: blur(4px);
 }
 .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
 .terminal-dot--red { background: #ff5f57; }
@@ -23,17 +24,18 @@
 .terminal-title {
   font-family: 'Space Mono', monospace;
   font-size: 0.7rem;
-  color: #555570;
+  color: #9ca3af;
   margin-left: auto;
 }
 .terminal-body {
-  background: #12121a;
-  border: 1px solid #2a2a3a;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-top: none;
   border-radius: 0 0 8px 8px;
   padding: 1rem 1.5rem;
   font-family: 'Space Mono', monospace;
   font-size: 0.85rem;
+  backdrop-filter: blur(4px);
 }
 .terminal-line {
   min-height: 2.8em;

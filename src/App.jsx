@@ -252,8 +252,8 @@ const HeroTerminal = () => {
         <span className="terminal-title">LAAS_app_studio: ~</span>
       </div>
       <div className="terminal-body">
-        <p className="terminal-line">
-          <span className="terminal-prompt">$</span>
+        <p className="terminal-line flex items-center gap-2">
+          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
           <span className="typing-text">{typingText}</span>
           <span className="terminal-cursor">_</span>
         </p>
@@ -263,7 +263,7 @@ const HeroTerminal = () => {
 };
 
 const NavBar = ({ scrolled }) => (
-  <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/10 py-4' : 'bg-transparent py-6'}`}>
+  <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-sm border-b border-white/10 py-4' : 'bg-transparent py-6'}`}>
     <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
       <a href="#" className="flex items-center group cursor-pointer">
         <img
@@ -373,7 +373,7 @@ export default function App() {
 
             <Reveal direction="up" delay={100}>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-8 leading-[1.1]">
-                Software, die <br />
+                Software, die einfach <br />
                 <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-500">
                   funktioniert
                   <span className="absolute -right-4 md:-right-8 top-[58%] -translate-y-1/2 w-3 md:w-5 h-10 md:h-16 bg-white/80 animate-[pulse_1s_steps(2,start)_infinite]"></span>
