@@ -6,8 +6,7 @@ import {
   Database, 
   Terminal,
   Code2,
-  ArrowRight,
-  Users
+  ArrowRight
 } from 'lucide-react';
 import { SiSupabase, SiFirebase, SiVercel } from 'react-icons/si';
 
@@ -34,7 +33,7 @@ const useIntersectionObserver = (options = {}) => {
 
 // --- Components ---
 
-// --- Particle Network Background ---
+// --- Particle Network Background (LAAS-style: subtle, terminal-inspired) ---
 const ParticleBackground = () => {
   const canvasRef = useRef(null);
   const animFrameRef = useRef(null);
@@ -53,23 +52,22 @@ const ParticleBackground = () => {
     resize();
     window.addEventListener('resize', resize);
 
-    const COUNT = 80;
-    const MAX_DIST = 140;
-    const MOUSE_DIST = 160;
+    const COUNT = 60;
+    const MAX_DIST = 120;
+    const MOUSE_DIST = 150;
 
     particlesRef.current = Array.from({ length: COUNT }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      r: 1.5 + Math.random() * 1.5,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: 1 + Math.random() * 1,
     }));
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const pts = particlesRef.current;
 
-      // Update positions
       pts.forEach(p => {
         p.x += p.vx;
         p.y += p.vy;
@@ -77,43 +75,42 @@ const ParticleBackground = () => {
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
       });
 
-      // Draw connections
+      // Particle connections – subtle white/gray (matches app palette)
       for (let i = 0; i < pts.length; i++) {
         for (let j = i + 1; j < pts.length; j++) {
           const dx = pts[i].x - pts[j].x;
           const dy = pts[i].y - pts[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < MAX_DIST) {
-            const alpha = (1 - dist / MAX_DIST) * 0.4;
+            const alpha = (1 - dist / MAX_DIST) * 0.12;
             ctx.beginPath();
             ctx.moveTo(pts[i].x, pts[i].y);
             ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
 
-        // Mouse connections
+        // Mouse hover – green accent (like app's green-400 / terminal green)
         const mdx = pts[i].x - mouseRef.current.x;
         const mdy = pts[i].y - mouseRef.current.y;
         const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
         if (mdist < MOUSE_DIST) {
-          const alpha = (1 - mdist / MOUSE_DIST) * 0.6;
+          const alpha = (1 - mdist / MOUSE_DIST) * 0.35;
           ctx.beginPath();
           ctx.moveTo(pts[i].x, pts[i].y);
           ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
-          ctx.strokeStyle = `rgba(51, 255, 51, ${alpha})`;
-          ctx.lineWidth = 0.8;
+          ctx.strokeStyle = `rgba(74, 222, 128, ${alpha})`;
+          ctx.lineWidth = 0.6;
           ctx.stroke();
         }
       }
 
-      // Draw dots
       pts.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.7)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
         ctx.fill();
       });
 
@@ -263,11 +260,11 @@ const HeroTerminal = () => {
 };
 
 const NavBar = ({ scrolled }) => (
-  <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-sm border-b border-white/10 py-4' : 'bg-transparent py-6'}`}>
+  <nav className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 bg-white/[0.06] backdrop-blur-xl border-b border-white/10 py-4 md:py-6`}>
     <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
       <a href="#" className="flex items-center group cursor-pointer">
         <img
-          src="/liftapp-2.png"
+          src="/liftapp.png"
           alt="LAAS – Luca Arnoldi App Studio"
           className="h-10 md:h-14 w-auto object-contain transition-all duration-300 group-hover:opacity-80 brightness-0 invert"
         />
@@ -277,7 +274,7 @@ const NavBar = ({ scrolled }) => (
         <a href="#about" className="text-gray-400 hover:text-white transition-colors">Studio</a>
         <a href="#contact" className="text-gray-400 hover:text-white transition-colors">Kontakt</a>
       </div>
-      <a href="#contact" className="hidden sm:inline-flex rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm text-white font-mono text-xs font-medium uppercase tracking-widest px-6 py-2.5 hover:bg-white hover:text-black transition-all duration-300">
+      <a href="#contact" className="hidden sm:inline-flex rounded-lg border border-white/20 bg-white/5 text-white font-mono text-xs font-medium uppercase tracking-widest px-6 py-2.5 hover:bg-white hover:text-black transition-all duration-300">
         INIT_PROJECT
       </a>
     </div>
@@ -299,7 +296,9 @@ const Card = ({ icon: Icon, title, description, label, children, className = '',
       <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500 shrink-0">
         <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
       </div>
-      <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">{title}</h3>
+      <h3 className="text-2xl font-semibold mb-3 tracking-tight font-mono">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">{title}</span>
+      </h3>
       {children ? children : <p className="text-gray-400 leading-relaxed text-sm font-light">{description}</p>}
     </div>
     {!hideExecute && (
@@ -309,6 +308,94 @@ const Card = ({ icon: Icon, title, description, label, children, className = '',
     )}
   </div>
 );
+
+// Interaktives Terminal für Clean-Code-Kachel
+const FRIENDLY_RESPONSES = [
+  '✓ Executed. 0 errors. Systems nominal.',
+  '✓ Roger that. Task complete.',
+  '✓ Affirmative. Processing finished.',
+  '✓ Done. Coffee break optional.',
+  '✓ Command processed. 100% success rate.',
+];
+
+const CleanCodeTerminal = () => {
+  const [input, setInput] = useState('');
+  const [history, setHistory] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e?.preventDefault();
+    const cmd = input.trim();
+    if (!cmd) return;
+    const response = FRIENDLY_RESPONSES[Math.floor(Math.random() * FRIENDLY_RESPONSES.length)];
+    setHistory((h) => [...h, { cmd, response }]);
+    setInput('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSubmit();
+  };
+
+  return (
+    <div
+      className="rounded-lg bg-black/60 border border-white/10 p-4 font-mono text-xs overflow-hidden flex-grow min-h-0 flex flex-col cursor-text"
+      onClick={() => inputRef.current?.focus()}
+    >
+      <div className="space-y-1.5 text-gray-400 overflow-y-auto flex-grow min-h-0">
+        <div className="flex items-center gap-2">
+          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+          <span className="text-white">deploy --prod</span>
+        </div>
+        <div className="text-green-400/80 pl-6">✓ Live in 0.4s</div>
+        <div className="flex items-center gap-2 pt-2">
+          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+          <span className="text-white">health check</span>
+        </div>
+        <div className="text-green-400/80 pl-6">✓ All systems operational</div>
+        <div className="flex items-center gap-2 pt-2">
+          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+          <span className="text-white">scale --instances 5</span>
+        </div>
+        <div className="text-green-400/80 pl-6">✓ 5 instances running</div>
+        {history.map((h, i) => (
+          <div key={i}>
+            <div className="flex items-center gap-2 pt-2">
+              <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+              <span className="text-white">{h.cmd}</span>
+            </div>
+            <div className="text-green-400/80 pl-6">{h.response}</div>
+            <div className="pl-6 pt-2">
+              <img
+                src="/826041-robo.svg"
+                alt=""
+                className="w-14 h-14 object-contain opacity-90"
+                style={{ filter: 'brightness(0) saturate(100%) invert(45%) sepia(55%) saturate(1000%) hue-rotate(350deg) brightness(0.6)' }}
+              />
+            </div>
+          </div>
+        ))}
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-2">
+          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+          {!isFocused && <span className="terminal-cursor text-white shrink-0">|</span>}
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder=""
+            className="flex-1 min-w-0 bg-transparent text-white outline-none border-none placeholder-gray-500 caret-white"
+            spellCheck={false}
+            autoComplete="off"
+          />
+        </form>
+      </div>
+    </div>
+  );
+};
 
 // Kachel-Vorlage ohne Execute-Footer (für Tool-Kacheln)
 const ToolCard = ({ icon: Icon, label, title, children, className = '', hideIcon = false }) => (
@@ -328,18 +415,92 @@ const ToolCard = ({ icon: Icon, label, title, children, className = '', hideIcon
             <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
           </div>
         )}
-        <h3 className="text-2xl font-semibold text-white mb-4 tracking-tight">{title}</h3>
+        <h3 className="text-2xl font-semibold mb-3 tracking-tight font-mono">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">{title}</span>
+        </h3>
       </div>
       {children}
     </div>
   </div>
 );
 
-const ServiceCard = ({ icon, title, description, delay, index }) => (
-  <Reveal delay={delay} direction="up">
-    <Card icon={icon} title={title} description={description} label={`SRV_0${index}.EXE`} className="h-[350px]" />
-  </Reveal>
-);
+// Terminal-Typing-Effekt: Text erscheint wie beim Codieren
+const useTerminalTyping = (text, isActive, charDelay = 25) => {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!isActive || !text) return;
+    setDisplayed('');
+    setDone(false);
+    let i = 0;
+    const id = setInterval(() => {
+      if (i < text.length) {
+        setDisplayed(text.slice(0, i + 1));
+        i++;
+      } else {
+        setDone(true);
+        clearInterval(id);
+      }
+    }, charDelay);
+    return () => clearInterval(id);
+  }, [text, isActive, charDelay]);
+
+  return [displayed, done];
+};
+
+// Service-Kachel mit Terminal-Typing-Animation
+const ServiceCard = ({ icon: Icon, title, description, delay = 0, index }) => {
+  const [ref, isVisible] = useIntersectionObserver({ threshold: 0.2 });
+  const [startTyping, setStartTyping] = useState(false);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const t = setTimeout(() => setStartTyping(true), delay);
+    return () => clearTimeout(t);
+  }, [isVisible, delay]);
+
+  const [titleText, titleDone] = useTerminalTyping(title, startTyping, 30);
+  const [descStart, setDescStart] = useState(false);
+  useEffect(() => {
+    if (!titleDone) return;
+    const t = setTimeout(() => setDescStart(true), 150);
+    return () => clearTimeout(t);
+  }, [titleDone]);
+  const [descText, descDone] = useTerminalTyping(description, descStart, 15);
+
+  return (
+    <div ref={ref} className="opacity-100">
+      <div className="group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden h-[420px] flex flex-col justify-between">
+        <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02]">
+          <div className="flex gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-red-400/80 transition-colors"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-yellow-400/80 transition-colors"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-green-400/80 transition-colors"></div>
+          </div>
+          <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">SRV_0{index}.EXE</span>
+        </div>
+        <div className="p-8 flex-grow flex flex-col min-h-0">
+          <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500 shrink-0">
+            <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
+          </div>
+          <h3 className="text-2xl font-semibold mb-3 tracking-tight font-mono min-h-[2.5rem]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">{titleText}</span>
+            {!titleDone && <span className="terminal-cursor text-green-400">|</span>}
+          </h3>
+          <p className="text-gray-400 leading-relaxed text-sm font-light font-mono min-h-[3rem]">
+            {descStart && <span className="text-green-400/70 mr-1">&gt;</span>}
+            {descText}
+            {descStart && !descDone && <span className="terminal-cursor text-green-400">|</span>}
+          </p>
+        </div>
+        <div className="px-8 pb-8 flex items-center font-mono text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors shrink-0">
+          <span className="text-green-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">&gt;</span> Execute <ArrowRight className="w-4 h-4 ml-2" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -374,7 +535,7 @@ export default function App() {
             <Reveal direction="up" delay={100}>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-8 leading-[1.1]">
                 Software, die einfach <br />
-                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-500">
+                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">
                   funktioniert
                   <span className="absolute -right-4 md:-right-8 top-[58%] -translate-y-1/2 w-3 md:w-5 h-10 md:h-16 bg-white/80 animate-[pulse_1s_steps(2,start)_infinite]"></span>
                 </span>
@@ -415,9 +576,9 @@ export default function App() {
             </Reveal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard index={1} icon={Cpu} title="KI Automatisierung" description="KI-Modelle einbauen, Prozesse automatisieren, Daten auswerten – ich helfe dir dabei." delay={100} />
-              <ServiceCard index={2} icon={Workflow} title="Smart Workflows" description="Deine Tools vernetzen, Pipelines bauen – kein Copy-Paste mehr nötig." delay={200} />
-              <ServiceCard index={3} icon={Smartphone} title="App Entwicklung" description="Maßgeschneiderte Native- und Web-Apps. Perfektes UI/UX-Design nach modernsten Standards." delay={300} />
+              <ServiceCard index={1} icon={Smartphone} title="App Entwicklung" description="Maßgeschneiderte Native- und Web-Apps. Perfektes UI/UX-Design nach modernsten Standards." delay={100} />
+              <ServiceCard index={2} icon={Cpu} title="Automatisierung" description="KI-Modelle einbauen, Prozesse automatisieren, Daten auswerten – ich helfe dir dabei." delay={200} />
+              <ServiceCard index={3} icon={Workflow} title="Smart Workflows" description="Deine Tools vernetzen, Pipelines bauen – kein Copy-Paste mehr nötig." delay={300} />
               <ServiceCard index={4} icon={Database} title="Premium Hosting" description="Blitzschnelles, DSGVO-konformes Hosting. Server, Backups und Skalierung laufen vollautomatisch." delay={400} />
             </div>
           </div>
@@ -427,108 +588,115 @@ export default function App() {
         <section id="about" className="py-20 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto md:auto-rows-[328px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* Clean Code – links oben, 2 Spalten */}
-              <div className="md:col-span-2 md:col-start-1 md:row-start-1">
-                <Card
-                  icon={Code2}
-                  title="Clean Code. High Performance."
-                  description="Ich schreibe Code, der heute funktioniert und morgen noch mitmacht. Sauber, schnell – ohne Ballast."
-                  label="CODE_01.EXE"
-                  className="h-[328px]"
-                  hideExecute={true}
-                />
-              </div>
-
-              {/* Entwicklungstools – rechts oben */}
-              <ToolCard
-                icon={Workflow}
-                title="Entwicklungstools"
-                label="TOOLS_01.EXE"
-                className="h-[328px] md:col-start-3 md:row-start-1"
-              >
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                      <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />
-                    </div>
-                    <span className="text-sm text-gray-300 font-medium">Cursor AI</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                      <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />
-                    </div>
-                    <span className="text-sm text-gray-300 font-medium">n8n</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                      <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />
-                    </div>
-                    <span className="text-sm text-gray-300 font-medium">Anthropic</span>
-                  </div>
-                </div>
-              </ToolCard>
-
-              {/* Meine Referenzen – links unten, 2 Spalten */}
-              <div className="order-last md:order-none md:col-span-2 md:col-start-1 md:row-start-2">
+              {/* Rechte Spalte: Entwicklungstools oben */}
+              <div className="md:col-span-1 md:col-start-2 md:row-start-1">
                 <ToolCard
-                  icon={Users}
-                  hideIcon={true}
-                  title="Meine Referenzen"
-                  label="CLIENTS_01.EXE"
-                  className="h-[328px] w-full"
+                  icon={Workflow}
+                  title="Entwicklungstools"
+                  label="TOOLS_01.EXE"
+                  className="h-[328px]"
                 >
-                  <div className="overflow-hidden relative flex items-center min-h-[200px]">
-                    <div className="flex gap-3 animate-marquee shrink-0">
-                      {[
-                        { src: '/harley-davidson-logo.png', alt: 'Harley-Davidson Power Shop', bg: 'bg-white' },
-                        { src: '/intersport-gemo-logo.png', alt: 'Intersport GEMO', bg: 'bg-white' },
-                        { src: '/mobileobjects-logo.png', alt: 'mobileObjects', bg: 'bg-black border border-white/10' },
-                        { src: '/harley-davidson-logo.png', alt: 'Harley-Davidson Power Shop', bg: 'bg-white' },
-                        { src: '/intersport-gemo-logo.png', alt: 'Intersport GEMO', bg: 'bg-white' },
-                        { src: '/mobileobjects-logo.png', alt: 'mobileObjects', bg: 'bg-black border border-white/10' },
-                      ].map((client, i) => (
-                        <div key={i} className={`flex-shrink-0 h-20 w-48 rounded-lg ${client.bg} flex items-center justify-center px-4 overflow-hidden`}>
-                          <img src={client.src} alt={client.alt} className="w-full h-full object-contain" />
-                        </div>
-                      ))}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                        <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-sm text-gray-300 font-medium">Cursor AI</span>
                     </div>
-                    <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                        <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-sm text-gray-300 font-medium">n8n</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                        <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-sm text-gray-300 font-medium">Anthropic</span>
+                    </div>
                   </div>
                 </ToolCard>
               </div>
 
-              {/* Datenbank & Hosting – rechts unten */}
-              <ToolCard
-                icon={Database}
-                title="Datenbank & Hosting"
-                label="TOOLS_02.EXE"
-                className="h-[328px] md:col-start-3 md:row-start-2"
-              >
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                      <SiSupabase className="w-4 h-4" style={{ color: '#3ECF8E' }} />
+              {/* Rechte Spalte: Datenbank & Hosting unten */}
+              <div className="md:col-span-1 md:col-start-2 md:row-start-2">
+                <ToolCard
+                  icon={Database}
+                  title="Datenbank & Hosting"
+                  label="TOOLS_02.EXE"
+                  className="h-[328px]"
+                >
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                        <SiSupabase className="w-4 h-4" style={{ color: '#3ECF8E' }} />
+                      </div>
+                      <span className="text-sm text-gray-300 font-medium">Supabase</span>
                     </div>
-                    <span className="text-sm text-gray-300 font-medium">Supabase</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                      <SiFirebase className="w-4 h-4" style={{ color: '#FFCA28' }} />
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                        <SiFirebase className="w-4 h-4" style={{ color: '#FFCA28' }} />
+                      </div>
+                      <span className="text-sm text-gray-300 font-medium">Firebase</span>
                     </div>
-                    <span className="text-sm text-gray-300 font-medium">Firebase</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                      <SiVercel className="w-4 h-4" style={{ color: '#FFFFFF' }} />
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                        <SiVercel className="w-4 h-4" style={{ color: '#FFFFFF' }} />
+                      </div>
+                      <span className="text-sm text-gray-300 font-medium">Vercel</span>
                     </div>
-                    <span className="text-sm text-gray-300 font-medium">Vercel</span>
                   </div>
-                </div>
-              </ToolCard>
+                </ToolCard>
+              </div>
 
+              {/* Linke Spalte: Clean Code – über beide Zeilen */}
+              <div className="md:col-span-1 md:col-start-1 md:row-span-2 md:row-start-1">
+                <Card
+                  icon={Code2}
+                  title="Clean Code. High Performance."
+                  label="CODE_01.EXE"
+                  className="h-full md:min-h-[672px] max-h-[672px]"
+                  hideExecute={true}
+                >
+                  <CleanCodeTerminal />
+                </Card>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Referenzen Section – Kunden in einheitlichen Boxen, monochrom */}
+        <section id="referenzen" className="py-16 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <p className="text-gray-500 text-sm font-mono text-center mb-10">
+              Kunden, mit denen ich zusammen arbeite
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { src: '/harley-davidson-logo.png', name: 'Harley-Davidson Power Shop' },
+                { src: '/intersport-gemo-logo.png', name: 'Intersport GEMO', large: true },
+                { src: '/mobileobjects-logo.png', name: 'mobileObjects', large: true },
+              ].map((client, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col items-center justify-between p-8 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/15 transition-all duration-300 aspect-[4/3] min-h-[180px]"
+                >
+                  <div className="flex-1 flex items-center justify-center w-full min-h-0">
+                    <img
+                      src={client.src}
+                      alt={client.name}
+                      className={`w-auto object-contain ${client.large ? 'max-h-64 md:max-h-96' : 'max-h-40 md:max-h-56'}`}
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-gray-400 text-center shrink-0 pt-4">
+                    {client.name}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -566,28 +734,25 @@ export default function App() {
 
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-[#020202] pt-16 pb-8 relative z-10">
+      {/* Footer – volle Breite mit Blur wie Header */}
+      <footer className="w-full bg-white/[0.06] backdrop-blur-xl border-t border-white/10 py-6 relative z-10">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-16">
-            <a href="#" className="flex items-center group cursor-pointer">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
+            <a href="#" className="flex items-center group cursor-pointer shrink-0">
               <img
-                src="/liftapp-2.png"
+                src="/liftapp.png"
                 alt="LAAS – Luca Arnoldi App Studio"
-                className="h-10 w-auto object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300 brightness-0 invert"
+                className="h-8 w-auto object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300 brightness-0 invert"
               />
             </a>
-            <div className="flex flex-wrap justify-center gap-6 text-xs font-mono text-gray-500 uppercase tracking-widest">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-xs font-mono text-gray-500 uppercase tracking-widest">
               <a href="#" className="hover:text-white transition-colors">Impressum</a>
               <a href="#" className="hover:text-white transition-colors">Datenschutz</a>
               <a href="#" className="hover:text-white transition-colors">AGB</a>
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 font-mono text-[10px] uppercase tracking-widest border-t border-white/5 pt-8">
-            <span>© {new Date().getFullYear()} LUCA ARNOLDI APP STUDIO.</span>
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2 text-gray-600 font-mono text-[10px] uppercase tracking-widest shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-              STATUS: ALL_SYSTEMS_NOMINAL
+              © {new Date().getFullYear()} LAAS
             </span>
           </div>
         </div>
