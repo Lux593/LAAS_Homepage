@@ -339,88 +339,174 @@ const CleanCodeTerminal = () => {
 
   return (
     <div
-      className="rounded-lg bg-black/60 border border-white/10 p-4 font-mono text-xs overflow-hidden flex-grow min-h-0 flex flex-col cursor-text"
+      className="space-y-1.5 text-gray-400 overflow-y-auto flex-grow min-h-0 cursor-text scrollbar-glass"
       onClick={() => inputRef.current?.focus()}
     >
-      <div className="space-y-1.5 text-gray-400 overflow-y-auto flex-grow min-h-0">
-        <div className="flex items-center gap-2">
-          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
-          <span className="text-white">deploy --prod</span>
-        </div>
-        <div className="text-green-400/80 pl-6">✓ Live in 0.4s</div>
-        <div className="flex items-center gap-2 pt-2">
-          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
-          <span className="text-white">health check</span>
-        </div>
-        <div className="text-green-400/80 pl-6">✓ All systems operational</div>
-        <div className="flex items-center gap-2 pt-2">
-          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
-          <span className="text-white">scale --instances 5</span>
-        </div>
-        <div className="text-green-400/80 pl-6">✓ 5 instances running</div>
-        {history.map((h, i) => (
-          <div key={i}>
-            <div className="flex items-center gap-2 pt-2">
-              <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
-              <span className="text-white">{h.cmd}</span>
-            </div>
-            <div className="text-green-400/80 pl-6">{h.response}</div>
-            <div className="pl-6 pt-2">
-              <img
-                src="/826041-robo.svg"
-                alt=""
-                className="w-14 h-14 object-contain opacity-90"
-                style={{ filter: 'brightness(0) saturate(100%) invert(45%) sepia(55%) saturate(1000%) hue-rotate(350deg) brightness(0.6)' }}
-              />
-            </div>
+      <div className="flex items-center gap-2">
+        <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+        <span className="text-white">deploy --prod</span>
+      </div>
+      <div className="text-green-400/80 pl-6">✓ Live in 0.4s</div>
+      <div className="flex items-center gap-2 pt-2">
+        <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+        <span className="text-white">health check</span>
+      </div>
+      <div className="text-green-400/80 pl-6">✓ All systems operational</div>
+      <div className="flex items-center gap-2 pt-2">
+        <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+        <span className="text-white">scale --instances 5</span>
+      </div>
+      <div className="text-green-400/80 pl-6">✓ 5 instances running</div>
+      {history.map((h, i) => (
+        <div key={i}>
+          <div className="flex items-center gap-2 pt-2">
+            <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+            <span className="text-white">{h.cmd}</span>
           </div>
-        ))}
-        <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-2">
-          <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
-          {!isFocused && <span className="terminal-cursor text-white shrink-0">|</span>}
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder=""
-            className="flex-1 min-w-0 bg-transparent text-white outline-none border-none placeholder-gray-500 caret-white"
-            spellCheck={false}
-            autoComplete="off"
+          <div className="text-green-400/80 pl-6">{h.response}</div>
+          <div className="pl-6 pt-2">
+            <img
+              src="/826041-robo.svg"
+              alt=""
+              className="w-14 h-14 object-contain opacity-90"
+              style={{ filter: 'brightness(0) saturate(100%) invert(45%) sepia(55%) saturate(1000%) hue-rotate(350deg) brightness(0.6)' }}
+            />
+          </div>
+        </div>
+      ))}
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-2">
+        <Code2 className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2} />
+        {!isFocused && <span className="terminal-cursor text-white shrink-0">|</span>}
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder=""
+          className="flex-1 min-w-0 bg-transparent text-white outline-none border-none placeholder-gray-500 caret-white"
+          spellCheck={false}
+          autoComplete="off"
+        />
+      </form>
+    </div>
+  );
+};
+
+// Tools-Kachel mit Animationen
+const ToolsCard = () => {
+  const [ref, isVisible] = useIntersectionObserver({ threshold: 0.2 });
+
+  return (
+    <div
+      ref={ref}
+      className="group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden"
+    >
+      <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02]">
+        <div className="flex gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-red-400/80 transition-colors"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-yellow-400/80 transition-colors"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-green-400/80 transition-colors"></div>
+        </div>
+        <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">TOOLS_01.EXE</span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+        <div className="p-8">
+          <h3
+            className="text-lg font-semibold mb-6 tracking-tight font-mono text-white/90 transition-all duration-500"
+            style={
+              isVisible
+                ? { animation: 'tool-item-in 0.5s ease-out forwards', opacity: 0 }
+                : { opacity: 0 }
+            }
+          >
+            Entwicklungstools
+          </h3>
+          <ToolList
+            tools={[
+              {
+                icon: <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />,
+                name: "Cursor AI"
+              },
+              {
+                icon: <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />,
+                name: "n8n"
+              },
+              {
+                icon: <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />,
+                name: "Anthropic"
+              }
+            ]}
+            animate
+            isVisible={isVisible}
+            baseDelay={100}
           />
-        </form>
+        </div>
+        <div className="p-8">
+          <h3
+            className="text-lg font-semibold mb-6 tracking-tight font-mono text-white/90 transition-all duration-500"
+            style={
+              isVisible
+                ? { animation: 'tool-item-in 0.5s ease-out forwards', animationDelay: '50ms', opacity: 0 }
+                : { opacity: 0 }
+            }
+          >
+            Datenbank & Hosting
+          </h3>
+          <ToolList
+            tools={[
+              {
+                icon: <SiSupabase className="w-5 h-5" style={{ color: '#3ECF8E' }} />,
+                name: "Supabase"
+              },
+              {
+                icon: <SiFirebase className="w-5 h-5" style={{ color: '#FFCA28' }} />,
+                name: "Firebase"
+              },
+              {
+                icon: <SiVercel className="w-5 h-5" style={{ color: '#FFFFFF' }} />,
+                name: "Vercel"
+              }
+            ]}
+            animate
+            isVisible={isVisible}
+            baseDelay={350}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-// Kachel-Vorlage ohne Execute-Footer (für Tool-Kacheln)
-const ToolCard = ({ icon: Icon, label, title, children, className = '', hideIcon = false }) => (
-  <div className={`group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden flex flex-col ${className}`}>
-    <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02] shrink-0">
-      <div className="flex gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-red-400/80 transition-colors"></div>
-        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-yellow-400/80 transition-colors"></div>
-        <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover:bg-green-400/80 transition-colors"></div>
+// Tool-Liste: nur Icon + Name (mit optionaler Stagger-Animation)
+const ToolList = ({ tools, animate = false, isVisible = false, baseDelay = 0 }) => (
+  <div className="flex flex-col gap-4">
+    {tools.map((tool, i) => (
+      <div
+        key={i}
+        className={`tool-item flex items-center gap-3 group cursor-default ${
+          animate && !isVisible ? 'opacity-0' : ''
+        }`}
+        style={
+          animate && isVisible
+            ? {
+                animation: 'tool-item-in 0.5s ease-out forwards',
+                animationDelay: `${baseDelay + i * 80}ms`,
+                opacity: 0
+              }
+            : undefined
+        }
+      >
+        <div className="tool-item-icon w-10 h-10 rounded-lg flex items-center justify-center shrink-0 p-2 bg-white/5 border border-white/10">
+          {tool.icon}
+        </div>
+        <span className="text-base text-gray-200 font-medium group-hover:text-white transition-colors duration-300">
+          {tool.name}
+        </span>
       </div>
-      <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{label}</span>
-    </div>
-    <div className="p-8 flex flex-col justify-between flex-grow min-h-0">
-      <div>
-        {!hideIcon && (
-          <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500">
-            <Icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" strokeWidth={1.5} />
-          </div>
-        )}
-        <h3 className="text-2xl font-semibold mb-3 tracking-tight font-mono">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">{title}</span>
-        </h3>
-      </div>
-      {children}
-    </div>
+    ))}
   </div>
 );
 
@@ -588,83 +674,36 @@ export default function App() {
         <section id="about" className="py-12 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-              {/* Rechte Spalte: Entwicklungstools oben */}
-              <div className="md:col-span-1 md:col-start-2 md:row-start-1">
-                <ToolCard
-                  icon={Workflow}
-                  title="Entwicklungstools"
-                  label="TOOLS_01.EXE"
-                  className="h-[324px]"
-                >
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                        <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="text-sm text-gray-300 font-medium">Cursor AI</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                        <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="text-sm text-gray-300 font-medium">n8n</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                        <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="text-sm text-gray-300 font-medium">Anthropic</span>
-                    </div>
-                  </div>
-                </ToolCard>
+            <Reveal direction="left">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+                Development <span className="text-gray-500 font-mono text-2xl md:text-4xl font-normal ml-2">_Studio</span>
+              </h2>
+              <div className="text-gray-400 text-lg mb-10 max-w-2xl font-light">
+                <p className="font-mono text-xs text-green-400 mb-2">[ Stack geladen: Modern Web Tech ]</p>
+                <p>Mein Werkzeugkasten – Tools, Code-Standards und Infrastruktur, die funktionieren.</p>
               </div>
+            </Reveal>
 
-              {/* Rechte Spalte: Datenbank & Hosting unten */}
-              <div className="md:col-span-1 md:col-start-2 md:row-start-2">
-                <ToolCard
-                  icon={Database}
-                  title="Datenbank & Hosting"
-                  label="TOOLS_02.EXE"
-                  className="h-[324px]"
-                >
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                        <SiSupabase className="w-4 h-4" style={{ color: '#3ECF8E' }} />
-                      </div>
-                      <span className="text-sm text-gray-300 font-medium">Supabase</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                        <SiFirebase className="w-4 h-4" style={{ color: '#FFCA28' }} />
-                      </div>
-                      <span className="text-sm text-gray-300 font-medium">Firebase</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
-                        <SiVercel className="w-4 h-4" style={{ color: '#FFFFFF' }} />
-                      </div>
-                      <span className="text-sm text-gray-300 font-medium">Vercel</span>
-                    </div>
-                  </div>
-                </ToolCard>
-              </div>
-
-              {/* Linke Spalte: Clean Code – über beide Zeilen */}
-              <div className="md:col-span-1 md:col-start-1 md:row-span-2 md:row-start-1">
+            <div className="space-y-8">
+              {/* Clean Code Kachel */}
+              <Reveal direction="up" delay={100}>
                 <Card
                   icon={Code2}
                   title="Clean Code. High Performance."
                   label="CODE_01.EXE"
-                  className="h-full md:min-h-[672px] max-h-[672px]"
+                  className="h-[500px]"
                   hideExecute={true}
                 >
-                  <CleanCodeTerminal />
+                  <div className="rounded-lg bg-black/60 border border-white/10 p-4 font-mono text-xs overflow-hidden flex-grow min-h-0 flex flex-col">
+                    <CleanCodeTerminal />
+                  </div>
                 </Card>
-              </div>
+              </Reveal>
 
+              {/* Tools-Kachel: Mitte geteilt, mit Animationen */}
+              <Reveal direction="up" delay={200}>
+                <ToolsCard />
+              </Reveal>
             </div>
           </div>
         </section>

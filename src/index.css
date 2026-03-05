@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Globaler Liquid-Glass-Scrollbar für die App */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
+}
+
+html::-webkit-scrollbar {
+  width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+html::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
 /* Terminal Widget */
 .hero-terminal {
   @apply w-full max-w-2xl mx-auto mb-8 overflow-hidden;
@@ -120,4 +152,79 @@
   animation: marquee 18s linear infinite;
   display: flex;
   width: max-content;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
+
+/* Tools-Kachel: Staggered Slide-in */
+@keyframes tool-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tool-item-icon {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tool-item:hover .tool-item-icon {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Liquid Glass Scrollbar – passt zur App-Ästhetik */
+.scrollbar-glass {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
+}
+
+.scrollbar-glass::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-glass::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  margin: 4px 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.scrollbar-glass::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.scrollbar-glass::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.scrollbar-glass::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.35);
 }
