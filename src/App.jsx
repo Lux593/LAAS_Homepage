@@ -1,14 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Cpu, 
-  Workflow, 
-  Smartphone, 
-  Database, 
+import {
+  Cpu,
+  Workflow,
+  Smartphone,
+  Database,
   Terminal,
   Code2,
   ArrowRight
 } from 'lucide-react';
 import { SiSupabase, SiFirebase, SiVercel } from 'react-icons/si';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import Lenis from 'lenis';
+
+// --- Lenis Smooth Scroll ---
+const useLenis = () => {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 2,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy();
+  }, []);
+};
 
 // --- Custom Hooks ---
 const useIntersectionObserver = (options = {}) => {
@@ -31,7 +52,167 @@ const useIntersectionObserver = (options = {}) => {
   return [targetRef, isIntersecting];
 };
 
-// --- Components ---
+// --- Framer Motion Variants ---
+const fadeInUp = {
+  hidden: { opacity: 0, y: 48 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay },
+  }),
+};
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: 48 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay },
+  }),
+};
+
+const fadeIn = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay },
+  }),
+};
+
+// --- Reveal Component (kept for components that use it) ---
+const Reveal = ({ children, direction = 'up', delay = 0 }) => {
+  const [ref, isVisible] = useIntersectionObserver();
+  const baseClasses = "transition-all duration-700 ease-out will-change-transform";
+  const hiddenClasses = {
+    up: "opacity-0 translate-y-12",
+    down: "opacity-0 -translate-y-12",
+    left: "opacity-0 translate-x-12",
+    right: "opacity-0 -translate-x-12",
+    fade: "opacity-0 scale-95"
+  };
+  const visibleClasses = "opacity-100 translate-y-0 translate-x-0 scale-100";
+
+  return (
+    <div
+      ref={ref}
+      className={`${baseClasses} ${isVisible ? visibleClasses : hiddenClasses[direction]}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// --- Rotating Word Component ---
+const ROTATING_WORDS = ['Web-Apps.', 'native Apps.', 'Workflow-Automation.'];
+
+const RotatingWord = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span className="inline-flex overflow-hidden align-bottom relative">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={ROTATING_WORDS[index]}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-100%', opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-block text-white"
+        >
+          {ROTATING_WORDS[index]}
+        </motion.span>
+      </AnimatePresence>
+      <span
+        className="inline-block w-[3px] ml-1 bg-white/80 rounded-sm self-stretch animate-[blink_0.7s_step-end_infinite]"
+        aria-hidden="true"
+      />
+    </span>
+  );
+};
+
+// --- Scroll Highlight Text ---
+const ScrollHighlightText = ({ text }) => {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const words = text.split(' ');
+
+  return (
+    <section ref={sectionRef} className="relative" style={{ minHeight: '300vh' }}>
+      <div className="sticky top-0 h-screen flex items-center justify-center">
+        <div className="max-w-5xl mx-auto px-6 md:px-12">
+          <p className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.15] tracking-tight">
+            {words.map((word, i) => (
+              <HighlightWord
+                key={i}
+                word={word}
+                index={i}
+                total={words.length}
+                scrollYProgress={scrollYProgress}
+              />
+            ))}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const HighlightWord = ({ word, index, total, scrollYProgress }) => {
+  const start = index / total;
+  const end = (index + 1) / total;
+  const opacity = useTransform(scrollYProgress, [start, end], [0.2, 1]);
+
+  return (
+    <motion.span style={{ opacity }} className="inline-block mr-[0.3em]">
+      {word}
+    </motion.span>
+  );
+};
+
+// --- 3D Scroll Card ---
+const ScrollCard3D = ({ children, index = 0 }) => {
+  const cardRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'end center'],
+  });
+
+  const staggerOffset = index * 0.05;
+  const rotateX = useTransform(scrollYProgress, [0 + staggerOffset, 0.6 + staggerOffset], [25, 0]);
+  const translateY = useTransform(scrollYProgress, [0 + staggerOffset, 0.6 + staggerOffset], [80, 0]);
+  const opacity = useTransform(scrollYProgress, [0 + staggerOffset, 0.5 + staggerOffset], [0.3, 1]);
+  const scale = useTransform(scrollYProgress, [0 + staggerOffset, 0.6 + staggerOffset], [0.9, 1]);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      style={{
+        perspective: 1200,
+        transformStyle: 'preserve-3d',
+        rotateX,
+        translateY,
+        opacity,
+        scale,
+        willChange: 'transform',
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 // --- Particle Network Background (LAAS-style: subtle, terminal-inspired) ---
 const ParticleBackground = () => {
@@ -146,29 +327,6 @@ const ParticleBackground = () => {
   );
 };
 
-const Reveal = ({ children, direction = 'up', delay = 0 }) => {
-  const [ref, isVisible] = useIntersectionObserver();
-  const baseClasses = "transition-all duration-700 ease-out will-change-transform";
-  const hiddenClasses = {
-    up: "opacity-0 translate-y-12",
-    down: "opacity-0 -translate-y-12",
-    left: "opacity-0 translate-x-12",
-    right: "opacity-0 -translate-x-12",
-    fade: "opacity-0 scale-95"
-  };
-  const visibleClasses = "opacity-100 translate-y-0 translate-x-0 scale-100";
-
-  return (
-    <div
-      ref={ref}
-      className={`${baseClasses} ${isVisible ? visibleClasses : hiddenClasses[direction]}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
-
 // --- Hero Background Video ---
 const HeroBackgroundVideo = () => {
   const videoRef = useRef(null);
@@ -259,6 +417,7 @@ const HeroTerminal = () => {
   );
 };
 
+// --- NavBar ---
 const NavBar = ({ scrolled }) => (
   <nav className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 bg-white/[0.02] backdrop-blur-xl border-b border-white/10 py-4 md:py-6`}>
     <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
@@ -281,7 +440,7 @@ const NavBar = ({ scrolled }) => (
   </nav>
 );
 
-// Einheitliche Kachel-Vorlage (wie Premium Hosting)
+// --- Card Components ---
 const Card = ({ icon: Icon, title, description, label, children, className = '', hideExecute = false }) => (
   <div className={`group relative border border-white/10 rounded-2xl bg-[#0a0a0a] hover:bg-[#111] hover:border-white/30 transition-all duration-500 overflow-hidden min-h-[340px] flex flex-col justify-between ${className}`}>
     <div className="w-full border-b border-white/10 px-4 py-3 flex justify-between items-center bg-white/[0.02]">
@@ -426,18 +585,9 @@ const ToolsCard = () => {
           </h3>
           <ToolList
             tools={[
-              {
-                icon: <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />,
-                name: "Cursor AI"
-              },
-              {
-                icon: <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />,
-                name: "n8n"
-              },
-              {
-                icon: <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />,
-                name: "Anthropic"
-              }
+              { icon: <img src="/cursor-icon-white.svg" alt="" className="w-full h-full object-contain" />, name: "Cursor AI" },
+              { icon: <img src="/n8n-icon.svg" alt="" className="w-full h-full object-contain" />, name: "n8n" },
+              { icon: <img src="/anthropic-icon.svg" alt="" className="w-full h-full object-contain" />, name: "Anthropic" }
             ]}
             animate
             isVisible={isVisible}
@@ -457,18 +607,9 @@ const ToolsCard = () => {
           </h3>
           <ToolList
             tools={[
-              {
-                icon: <SiSupabase className="w-5 h-5" style={{ color: '#3ECF8E' }} />,
-                name: "Supabase"
-              },
-              {
-                icon: <SiFirebase className="w-5 h-5" style={{ color: '#FFCA28' }} />,
-                name: "Firebase"
-              },
-              {
-                icon: <SiVercel className="w-5 h-5" style={{ color: '#FFFFFF' }} />,
-                name: "Vercel"
-              }
+              { icon: <SiSupabase className="w-5 h-5" style={{ color: '#3ECF8E' }} />, name: "Supabase" },
+              { icon: <SiFirebase className="w-5 h-5" style={{ color: '#FFCA28' }} />, name: "Firebase" },
+              { icon: <SiVercel className="w-5 h-5" style={{ color: '#FFFFFF' }} />, name: "Vercel" }
             ]}
             animate
             isVisible={isVisible}
@@ -588,12 +729,15 @@ const ServiceCard = ({ icon: Icon, title, description, delay = 0, index }) => {
   );
 };
 
+// --- Main App ---
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
 
+  useLenis();
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -614,36 +758,52 @@ export default function App() {
 
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center text-center">
 
-            <Reveal direction="fade" delay={0}>
+            <motion.div
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+            >
               <HeroTerminal />
-            </Reveal>
+            </motion.div>
 
-            <Reveal direction="up" delay={100}>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-[1.1]">
-                Software, die einfach <br />
-                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">
-                  funktioniert
-                  <span className="absolute -right-4 md:-right-8 top-[58%] -translate-y-1/2 w-3 md:w-5 h-10 md:h-16 bg-white/80 animate-[pulse_1s_steps(2,start)_infinite]"></span>
-                </span>
-              </h1>
-            </Reveal>
+            <motion.h1
+              variants={fadeInUp}
+              initial="hidden"
+              animate="visible"
+              custom={0.1}
+              className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-[1.1]"
+            >
+              <span className="text-gray-500">Hey, ich bin Luca.</span>
+              <br />
+              <span className="text-white">Ich mache </span>
+              <RotatingWord />
+            </motion.h1>
 
-            <Reveal direction="up" delay={200}>
-              <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-8">
-                KI-Automatisierungen, Web-Apps, Hosting. Ich baue dir, was du brauchst – ohne bla bla.
-              </p>
-            </Reveal>
+            <motion.p
+              variants={fadeInUp}
+              initial="hidden"
+              animate="visible"
+              custom={0.2}
+              className="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-8"
+            >
+              KI-Automatisierungen, Web-Apps, Hosting. Ich baue dir, was du brauchst – ohne bla bla.
+            </motion.p>
 
-            <Reveal direction="up" delay={400}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#services" className="w-full sm:w-auto px-8 py-4 rounded-lg bg-white text-black font-mono text-sm font-bold uppercase tracking-widest hover:bg-gray-200 hover:scale-105 transition-all duration-300">
-                  Execute Services
-                </a>
-                <a href="#contact" className="w-full sm:w-auto px-8 py-4 rounded-lg border border-white/20 bg-white/5 text-white font-mono text-sm uppercase tracking-widest hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
-                  &gt; Terminal öffnen
-                </a>
-              </div>
-            </Reveal>
+            <motion.div
+              variants={fadeInUp}
+              initial="hidden"
+              animate="visible"
+              custom={0.4}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
+              <a href="#services" className="w-full sm:w-auto px-8 py-4 rounded-lg bg-white text-black font-mono text-sm font-bold uppercase tracking-widest hover:bg-gray-200 hover:scale-105 transition-all duration-300">
+                Execute Services
+              </a>
+              <a href="#contact" className="w-full sm:w-auto px-8 py-4 rounded-lg border border-white/20 bg-white/5 text-white font-mono text-sm uppercase tracking-widest hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
+                &gt; Terminal öffnen
+              </a>
+            </motion.div>
           </div>
         </section>
 
@@ -651,7 +811,13 @@ export default function App() {
         <section id="services" className="py-16 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <Reveal direction="left">
+            <motion.div
+              variants={fadeInLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              custom={0}
+            >
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
                 Engineering <span className="text-gray-500 font-mono text-2xl md:text-4xl font-normal ml-2">_Excellence</span>
               </h2>
@@ -659,16 +825,29 @@ export default function App() {
                 <p className="font-mono text-xs text-green-400 mb-2">[ Module geladen: 4 ]</p>
                 <p>Was ich anbiete – von KI-Workflows über Apps bis Hosting. Ehrlich und direkt.</p>
               </div>
-            </Reveal>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard index={1} icon={Smartphone} title="App Entwicklung" description="Maßgeschneiderte Native- und Web-Apps. Perfektes UI/UX-Design nach modernsten Standards." delay={100} />
-              <ServiceCard index={2} icon={Cpu} title="Automatisierung" description="KI-Modelle einbauen, Prozesse automatisieren, Daten auswerten – ich helfe dir dabei." delay={200} />
-              <ServiceCard index={3} icon={Workflow} title="Smart Workflows" description="Deine Tools vernetzen, Pipelines bauen – kein Copy-Paste mehr nötig." delay={300} />
-              <ServiceCard index={4} icon={Database} title="Premium Hosting" description="Blitzschnelles, DSGVO-konformes Hosting. Server, Backups und Skalierung laufen vollautomatisch." delay={400} />
+              <ScrollCard3D index={0}>
+                <ServiceCard index={1} icon={Smartphone} title="App Entwicklung" description="Maßgeschneiderte Native- und Web-Apps. Perfektes UI/UX-Design nach modernsten Standards." delay={100} />
+              </ScrollCard3D>
+              <ScrollCard3D index={1}>
+                <ServiceCard index={2} icon={Cpu} title="Automatisierung" description="KI-Modelle einbauen, Prozesse automatisieren, Daten auswerten – ich helfe dir dabei." delay={200} />
+              </ScrollCard3D>
+              <ScrollCard3D index={2}>
+                <ServiceCard index={3} icon={Workflow} title="Smart Workflows" description="Deine Tools vernetzen, Pipelines bauen – kein Copy-Paste mehr nötig." delay={300} />
+              </ScrollCard3D>
+              <ScrollCard3D index={3}>
+                <ServiceCard index={4} icon={Database} title="Premium Hosting" description="Blitzschnelles, DSGVO-konformes Hosting. Server, Backups und Skalierung laufen vollautomatisch." delay={400} />
+              </ScrollCard3D>
             </div>
           </div>
         </section>
+
+        {/* About / Scroll Highlight Text Section */}
+        <ScrollHighlightText
+          text="Ich baue Software, die nicht nur funktioniert, sondern begeistert. Clean Code, smarte Architektur und echte Ergebnisse – keine leeren Versprechen. Von der ersten Zeile Code bis zum fertigen Produkt."
+        />
 
         {/* Bento Grid / Studio Section */}
         <section id="about" className="py-12 relative overflow-hidden">
@@ -736,7 +915,12 @@ export default function App() {
         <section id="contact" className="py-16 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-            <Reveal direction="up">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            >
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl border border-white/10 bg-white/5 mb-6 backdrop-blur-md">
                 <Terminal className="w-8 h-8 text-white" strokeWidth={1.5} />
               </div>
@@ -784,14 +968,20 @@ export default function App() {
                   Senden //
                 </button>
               </form>
-            </Reveal>
+            </motion.div>
           </div>
         </section>
 
       </main>
 
       {/* Footer – volle Breite mit Blur wie Header */}
-      <footer className="w-full bg-white/[0.06] backdrop-blur-xl border-t border-white/10 py-6 relative z-10">
+      <motion.footer
+        className="w-full bg-white/[0.06] backdrop-blur-xl border-t border-white/10 py-6 relative z-10"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7 }}
+      >
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
             <a href="#" className="flex items-center group cursor-pointer shrink-0">
@@ -808,11 +998,11 @@ export default function App() {
             </div>
             <span className="flex items-center gap-2 text-gray-600 font-mono text-[10px] uppercase tracking-widest shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-              © {new Date().getFullYear()} LAAS
+              &copy; {new Date().getFullYear()} LAAS
             </span>
           </div>
         </div>
-      </footer>
+      </motion.footer>
 
     </div>
   );
