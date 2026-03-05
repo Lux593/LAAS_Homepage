@@ -260,7 +260,7 @@ const HeroTerminal = () => {
 };
 
 const NavBar = ({ scrolled }) => (
-  <nav className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 bg-white/[0.06] backdrop-blur-xl border-b border-white/10 py-4 md:py-6`}>
+  <nav className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 bg-white/[0.02] backdrop-blur-xl border-b border-white/10 py-4 md:py-6`}>
     <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
       <a href="#" className="flex items-center group cursor-pointer">
         <img
@@ -303,7 +303,7 @@ const Card = ({ icon: Icon, title, description, label, children, className = '',
     </div>
     {!hideExecute && (
       <div className="px-8 pb-8 flex items-center font-mono text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors shrink-0">
-        <span className="text-green-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">&gt;</span> Execute <ArrowRight className="w-4 h-4 ml-2" />
+        <span className="text-green-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">&gt;</span> Mehr <ArrowRight className="w-4 h-4 ml-2" />
       </div>
     )}
   </div>
@@ -495,7 +495,7 @@ const ServiceCard = ({ icon: Icon, title, description, delay = 0, index }) => {
           </p>
         </div>
         <div className="px-8 pb-8 flex items-center font-mono text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors shrink-0">
-          <span className="text-green-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">&gt;</span> Execute <ArrowRight className="w-4 h-4 ml-2" />
+          <span className="text-green-400 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">&gt;</span> Mehr <ArrowRight className="w-4 h-4 ml-2" />
         </div>
       </div>
     </div>
@@ -533,7 +533,7 @@ export default function App() {
             </Reveal>
 
             <Reveal direction="up" delay={100}>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-8 leading-[1.1]">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-[1.1]">
                 Software, die einfach <br />
                 <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-400">
                   funktioniert
@@ -543,7 +543,7 @@ export default function App() {
             </Reveal>
 
             <Reveal direction="up" delay={200}>
-              <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+              <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-8">
                 KI-Automatisierungen, Web-Apps, Hosting. Ich baue dir, was du brauchst – ohne bla bla.
               </p>
             </Reveal>
@@ -562,14 +562,14 @@ export default function App() {
         </section>
 
         {/* Services Section */}
-        <section id="services" className="py-32 relative overflow-hidden">
+        <section id="services" className="py-16 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
             <Reveal direction="left">
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
                 Engineering <span className="text-gray-500 font-mono text-2xl md:text-4xl font-normal ml-2">_Excellence</span>
               </h2>
-              <div className="text-gray-400 text-lg mb-16 max-w-2xl font-light">
+              <div className="text-gray-400 text-lg mb-10 max-w-2xl font-light">
                 <p className="font-mono text-xs text-green-400 mb-2">[ Module geladen: 4 ]</p>
                 <p>Was ich anbiete – von KI-Workflows über Apps bis Hosting. Ehrlich und direkt.</p>
               </div>
@@ -585,7 +585,7 @@ export default function App() {
         </section>
 
         {/* Bento Grid / Studio Section */}
-        <section id="about" className="py-20 relative overflow-hidden">
+        <section id="about" className="py-12 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -596,7 +596,7 @@ export default function App() {
                   icon={Workflow}
                   title="Entwicklungstools"
                   label="TOOLS_01.EXE"
-                  className="h-[328px]"
+                  className="h-[324px]"
                 >
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -627,7 +627,7 @@ export default function App() {
                   icon={Database}
                   title="Datenbank & Hosting"
                   label="TOOLS_02.EXE"
-                  className="h-[328px]"
+                  className="h-[324px]"
                 >
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-2">
@@ -669,32 +669,24 @@ export default function App() {
           </div>
         </section>
 
-        {/* Referenzen Section – Kunden in einheitlichen Boxen, monochrom */}
-        <section id="referenzen" className="py-16 relative overflow-hidden">
+        {/* Referenzen Section – Kunden ohne Kachel */}
+        <section id="referenzen" className="py-10 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <p className="text-gray-500 text-sm font-mono text-center mb-10">
+            <p className="text-gray-500 text-sm font-mono text-center mb-6">
               Kunden, mit denen ich zusammen arbeite
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {[
                 { src: '/harley-davidson-logo.png', name: 'Harley-Davidson Power Shop' },
                 { src: '/intersport-gemo-logo.png', name: 'Intersport GEMO', large: true },
                 { src: '/mobileobjects-logo.png', name: 'mobileObjects', large: true },
               ].map((client, i) => (
-                <div
-                  key={i}
-                  className="flex flex-col items-center justify-between p-8 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/15 transition-all duration-300 aspect-[4/3] min-h-[180px]"
-                >
-                  <div className="flex-1 flex items-center justify-center w-full min-h-0">
-                    <img
-                      src={client.src}
-                      alt={client.name}
-                      className={`w-auto object-contain ${client.large ? 'max-h-64 md:max-h-96' : 'max-h-40 md:max-h-56'}`}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-gray-400 text-center shrink-0 pt-4">
-                    {client.name}
-                  </span>
+                <div key={i} className="flex items-center justify-center">
+                  <img
+                    src={client.src}
+                    alt={client.name}
+                    className={`w-auto object-contain ${client.large ? 'max-h-64 md:max-h-96' : 'max-h-40 md:max-h-56'}`}
+                  />
                 </div>
               ))}
             </div>
@@ -702,32 +694,57 @@ export default function App() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-32 relative overflow-hidden">
+        <section id="contact" className="py-16 relative overflow-hidden">
           <ParticleBackground />
           <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
             <Reveal direction="up">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl border border-white/10 bg-white/5 mb-10 backdrop-blur-md">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl border border-white/10 bg-white/5 mb-6 backdrop-blur-md">
                 <Terminal className="w-8 h-8 text-white" strokeWidth={1.5} />
               </div>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4">
                 Lust auf ein Projekt?
               </h2>
-              <p className="text-lg text-gray-400 font-light mb-12 max-w-xl mx-auto leading-relaxed">
+              <p className="text-lg text-gray-400 font-light mb-8 max-w-xl mx-auto leading-relaxed">
                 Schreib mir – dann starten wir.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
+              <form className="flex flex-col gap-4 max-w-xl mx-auto w-full">
                 <div className="relative w-full">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-mono text-sm">&gt;</span>
                   <input
                     type="email"
+                    name="email"
                     placeholder="deine_email@domain.com"
                     className="pl-10 pr-6 py-4 w-full rounded-xl border border-white/20 bg-white/5 font-mono text-sm focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all text-white placeholder-gray-600 backdrop-blur-sm"
                   />
                 </div>
-                <button className="w-full sm:w-auto px-8 py-4 rounded-xl border border-white bg-white text-black font-mono font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors duration-300 shrink-0">
+                <div className="relative w-full">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-mono text-sm">&gt;</span>
+                  <select
+                    name="interesse"
+                    className="pl-10 pr-10 py-4 w-full rounded-xl border border-white/20 bg-white/5 font-mono text-sm focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all text-white backdrop-blur-sm appearance-none bg-[length:12px_12px] bg-[right_1rem_center] bg-no-repeat"
+                    style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")" }}
+                  >
+                    <option value="" className="bg-[#0a0a0a] text-gray-400">Was interessiert dich?</option>
+                    <option value="web-app" className="bg-[#0a0a0a] text-white">Web-App</option>
+                    <option value="app-entwicklung" className="bg-[#0a0a0a] text-white">App-Entwicklung</option>
+                    <option value="automatisierung" className="bg-[#0a0a0a] text-white">Automatisierung</option>
+                    <option value="hosting" className="bg-[#0a0a0a] text-white">Hosting</option>
+                    <option value="sonstiges" className="bg-[#0a0a0a] text-white">Sonstiges</option>
+                  </select>
+                </div>
+                <div className="relative w-full">
+                  <span className="absolute left-4 top-5 text-gray-500 font-mono text-sm">&gt;</span>
+                  <textarea
+                    name="nachricht"
+                    placeholder="Deine Nachricht..."
+                    rows={4}
+                    className="pl-10 pr-6 py-4 w-full rounded-xl border border-white/20 bg-white/5 font-mono text-sm focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all text-white placeholder-gray-600 backdrop-blur-sm resize-y min-h-[120px]"
+                  />
+                </div>
+                <button type="submit" className="w-full sm:w-auto px-8 py-4 rounded-xl border border-white bg-white text-black font-mono font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors duration-300 shrink-0 self-center">
                   Senden //
                 </button>
-              </div>
+              </form>
             </Reveal>
           </div>
         </section>
